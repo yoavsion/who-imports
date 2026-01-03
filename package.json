@@ -1,0 +1,65 @@
+{
+  "name": "who-imports",
+  "version": "1.0.0",
+  "description": "Export-level dependency graph tool for TypeScript codebases",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "who-imports": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepare": "lefthook install",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc -p tsconfig.eslint.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src eslint.config.js vitest.config.ts",
+    "lint:fix": "eslint src eslint.config.js vitest.config.ts --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "keywords": [
+    "typescript",
+    "dependency-graph",
+    "exports",
+    "imports",
+    "static-analysis",
+    "ast",
+    "ts-morph"
+  ],
+  "author": "Yoav Sion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoavsion/who-imports.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yoavsion/who-imports/issues"
+  },
+  "homepage": "https://github.com/yoavsion/who-imports#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "ts-morph": "^24.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^10.0.0",
+    "lefthook": "^2.0.13",
+    "prettier": "^3.4.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^2.1.0"
+  }
+}
