@@ -93,6 +93,45 @@ dot -Tsvg deps.dot -o deps.svg  # Render with GraphViz
 - **Type exports**: Includes `export type` and `import type`
 - **Path resolution**: Paths relative to folder (single) or common ancestor (multiple folders)
 
+## Programmatic API
+
+Use as a library for custom tooling:
+
+```typescript
+import {
+  parseFiles,
+  buildExportRegistry,
+  findConsumers,
+  buildDependencyOutput,
+  formatAsJson,
+} from 'who-imports';
+
+const { files, basePath } = parseFiles(['./src']);
+const registry = buildExportRegistry(files, basePath);
+const consumers = findConsumers(files, registry, basePath);
+const output = buildDependencyOutput(registry, consumers, files, basePath);
+
+console.log(formatAsJson(output));
+```
+
+### Exported Functions
+
+| Function                  | Description                                            |
+| ------------------------- | ------------------------------------------------------ |
+| `parseFiles`              | Load TypeScript files into a ts-morph Project          |
+| `addFilesToProject`       | Add additional files to existing project               |
+| `buildExportRegistry`     | Extract all exports and build re-export map            |
+| `resolveExport`           | Trace an export to its original source                 |
+| `getAllExportsFromModule` | Get all exports from a module (including star exports) |
+| `findConsumers`           | Find all consumers of exports                          |
+| `buildDependencyOutput`   | Build final dependency output structure                |
+| `formatAsJson`            | Format output as JSON                                  |
+| `formatAsDot`             | Format output as GraphViz DOT                          |
+
+### Exported Types
+
+`ExportEntry`, `ResolvedExport`, `Consumer`, `ExportDependencyInfo`, `DependencyGraphOutput`, `ExportRegistry`, `ConsumerMap`
+
 ## How It Works
 
 ```
@@ -109,25 +148,26 @@ CLI args
 ```bash
 git clone https://github.com/yoavsion/who-imports.git
 cd who-imports
-npm install
-npm run build
+yarn install
+yarn build
 ```
 
 ### Scripts
 
-| Script           | Description                     |
-| ---------------- | ------------------------------- |
-| `npm run build`  | Compile TypeScript to `dist/`   |
-| `npm run dev`    | Run directly via tsx (no build) |
-| `npm test`       | Run tests                       |
-| `npm run lint`   | Run ESLint                      |
-| `npm run format` | Format with Prettier            |
+| Script        | Description                     |
+| ------------- | ------------------------------- |
+| `yarn build`  | Compile TypeScript to `dist/`   |
+| `yarn dev`    | Run directly via tsx (no build) |
+| `yarn test`   | Run tests                       |
+| `yarn lint`   | Run ESLint                      |
+| `yarn format` | Format with Prettier            |
 
 ### Architecture
 
 ```
 src/
 ├── index.ts        # CLI entry point (commander)
+├── api.ts          # Programmatic API exports
 ├── types.ts        # Shared TypeScript types
 ├── parser.ts       # ts-morph project initialization, file collection
 ├── exports.ts      # Export extraction, re-export chain resolution

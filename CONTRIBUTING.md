@@ -6,26 +6,26 @@ Thanks for your interest in contributing!
 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/who-imports.git`
-3. Install dependencies: `npm install`
+3. Install dependencies: `yarn install`
 4. Create a branch: `git checkout -b my-feature`
 
 ## Development
 
 ```bash
 # Run tests
-npm test
+yarn test
 
 # Run type checking
-npm run typecheck
+yarn typecheck
 
 # Build
-npm run build
+yarn build
 ```
 
 ## Submitting Changes
 
-1. Ensure tests pass: `npm test`
-2. Ensure types check: `npm run typecheck`
+1. Ensure tests pass: `yarn test`
+2. Ensure types check: `yarn typecheck`
 3. Commit with a clear message
 4. Push to your fork
 5. Open a Pull Request

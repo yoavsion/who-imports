@@ -1,9 +1,16 @@
 {
   "name": "who-imports",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Export-level dependency graph tool for TypeScript codebases",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/api.js",
+  "types": "dist/api.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/api.d.ts",
+      "import": "./dist/api.js"
+    }
+  },
   "bin": {
     "who-imports": "dist/index.js"
   },
@@ -16,7 +23,7 @@
     "build:watch": "tsc --watch",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "yarn build",
     "typecheck": "tsc -p tsconfig.eslint.json",
     "test": "vitest run",
     "test:watch": "vitest",
