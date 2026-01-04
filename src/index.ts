@@ -15,13 +15,21 @@ const program = new Command();
 program
   .name('who-imports')
   .description('Generate export-level dependency graphs for TypeScript codebases')
-  .version('1.0.0')
+  .version('0.2.0')
   .requiredOption('-f, --folder <paths...>', 'Target folder(s) to analyze exports from')
   .option('-c, --consumer <paths...>', 'Folder(s) to search for consumers (defaults to --folder)')
+  .option('-i, --ignore-extension <exts...>', 'File extensions to ignore (e.g., .test.ts .spec.ts)')
+  .option('-d, --declarations', 'Include .d.ts declaration files (excluded by default)', false)
   .requiredOption('-o, --output <path>', 'Output file path (.json or .dot)')
   .parse(process.argv);
 
-const options = program.opts<{ folder: string[]; consumer?: string[]; output: string }>();
+const options = program.opts<{
+  folder: string[];
+  consumer?: string[];
+  ignoreExtension?: string[];
+  declarations: boolean;
+  output: string;
+}>();
 
 function validateFolders(folders: string[], label: string): void {
   for (const folder of folders) {
@@ -38,7 +46,19 @@ function validateFolders(folders: string[], label: string): void {
 }
 
 async function main() {
-  const { folder: exportFolders, consumer: consumerFolders, output } = options;
+  const {
+    folder: exportFolders,
+    consumer: consumerFolders,
+    ignoreExtension,
+    declarations,
+    output,
+  } = options;
+
+  // Build ignore extensions list (always ignore .d.ts unless --declarations is set)
+  const ignoreExtensions = [...(ignoreExtension ?? [])];
+  if (!declarations) {
+    ignoreExtensions.push('.d.ts');
+  }
 
   // Default consumer folders to export folders
   const effectiveConsumerFolders = consumerFolders ?? exportFolders;
@@ -61,7 +81,11 @@ async function main() {
 
   // Parse export files
   console.log('Parsing TypeScript files...');
-  const { project, files: exportFiles, basePath: exportBasePath } = parseFiles(exportFolders);
+  const {
+    project,
+    files: exportFiles,
+    basePath: exportBasePath,
+  } = parseFiles(exportFolders, ignoreExtensions);
   console.log(`Found ${exportFiles.size} export files`);
 
   if (exportFiles.size === 0) {
@@ -76,7 +100,7 @@ async function main() {
   if (consumerFolders && consumerFolders.length > 0) {
     // Add consumer files to project
     const allFiles = new Map(exportFiles);
-    addFilesToProject(project, allFiles, effectiveConsumerFolders);
+    addFilesToProject(project, allFiles, effectiveConsumerFolders, ignoreExtensions);
 
     // Build consumer files map (only files in consumer folders)
     consumerFiles = new Map<string, SourceFile>();

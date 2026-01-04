@@ -5,7 +5,10 @@ import * as fs from 'fs';
 /**
  * Initialize a ts-morph project and load all TypeScript files from specified folders
  */
-export function parseFiles(folders: string[]): {
+export function parseFiles(
+  folders: string[],
+  ignoreExtensions?: string[]
+): {
   project: Project;
   files: Map<string, SourceFile>;
   basePath: string;
@@ -30,7 +33,7 @@ export function parseFiles(folders: string[]): {
   // Collect all .ts/.tsx files from folders
   const filePaths: string[] = [];
   for (const folder of resolvedFolders) {
-    collectTypeScriptFiles(folder, filePaths);
+    collectTypeScriptFiles(folder, filePaths, ignoreExtensions);
   }
 
   // Add files to project
@@ -53,14 +56,15 @@ export function parseFiles(folders: string[]): {
 export function addFilesToProject(
   project: Project,
   files: Map<string, SourceFile>,
-  folders: string[]
+  folders: string[],
+  ignoreExtensions?: string[]
 ): void {
   const resolvedFolders = folders.map((f) => path.resolve(f));
 
   // Collect all .ts/.tsx files from folders
   const filePaths: string[] = [];
   for (const folder of resolvedFolders) {
-    collectTypeScriptFiles(folder, filePaths);
+    collectTypeScriptFiles(folder, filePaths, ignoreExtensions);
   }
 
   // Add files to project (skips already added)
@@ -73,9 +77,24 @@ export function addFilesToProject(
 }
 
 /**
+ * Check if a filename matches a glob-like pattern
+ * Supports * as wildcard (e.g., ".test.*" matches ".test.ts", ".test.tsx")
+ */
+function matchesPattern(filename: string, pattern: string): boolean {
+  // Convert glob pattern to regex: escape dots, convert * to .*
+  const regexPattern = pattern.replace(/\./g, '\\.').replace(/\*/g, '.*');
+  const regex = new RegExp(regexPattern + '$');
+  return regex.test(filename);
+}
+
+/**
  * Recursively collect all .ts and .tsx files from a directory
  */
-export function collectTypeScriptFiles(dir: string, result: string[]): void {
+export function collectTypeScriptFiles(
+  dir: string,
+  result: string[],
+  ignoreExtensions?: string[]
+): void {
   if (!fs.existsSync(dir)) {
     console.warn(`Warning: Directory not found: ${dir}`);
     return;
@@ -90,9 +109,13 @@ export function collectTypeScriptFiles(dir: string, result: string[]): void {
       if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
         continue;
       }
-      collectTypeScriptFiles(fullPath, result);
+      collectTypeScriptFiles(fullPath, result, ignoreExtensions);
     } else if (entry.isFile()) {
-      if (/\.(ts|tsx)$/.test(entry.name) && !entry.name.endsWith('.d.ts')) {
+      if (/\.(ts|tsx|js|jsx)$/.test(entry.name)) {
+        // Check if file should be ignored based on extension pattern
+        if (ignoreExtensions?.some((pattern) => matchesPattern(entry.name, pattern))) {
+          continue;
+        }
         result.push(fullPath);
       }
     }
