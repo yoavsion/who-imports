@@ -27,13 +27,13 @@ who-imports -f <folder> [-f <folder>...] [-c <folder>...] -o <output>
 
 ### Options
 
-| Flag                           | Description                                                               |
-| ------------------------------ | ------------------------------------------------------------------------- |
-| `-f, --folder <path>`          | Target folder(s) to analyze exports from. Repeatable.                     |
-| `-c, --consumer <path>`        | Folder(s) to search for consumers. Defaults to `-f`. Repeatable.          |
-| `-i, --ignore-extension <ext>` | File patterns to ignore (e.g., `.test.*`). Supports `*` glob. Repeatable. |
-| `-d, --declarations`           | Include `.d.ts` files (excluded by default).                              |
-| `-o, --output <path>`          | Output file. Extension determines format (`.json` or `.dot`).             |
+| Flag                           | Description                                                                          |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| `-f, --folder <path>`          | Target folder(s) to analyze exports from. Repeatable.                                |
+| `-c, --consumer <path>`        | Folder(s) to search for consumers. Defaults to `-f`. Repeatable.                     |
+| `-i, --ignore-extension <ext>` | File patterns to ignore (e.g., `'.test.*'`). Quote globs to prevent shell expansion. |
+| `-d, --declarations`           | Include `.d.ts` files (excluded by default).                                         |
+| `-o, --output <path>`          | Output file. Extension determines format (`.json` or `.dot`).                        |
 
 ### Examples
 

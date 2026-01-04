@@ -15,10 +15,13 @@ const program = new Command();
 program
   .name('who-imports')
   .description('Generate export-level dependency graphs for TypeScript codebases')
-  .version('0.2.0')
+  .version('0.2.1')
   .requiredOption('-f, --folder <paths...>', 'Target folder(s) to analyze exports from')
   .option('-c, --consumer <paths...>', 'Folder(s) to search for consumers (defaults to --folder)')
-  .option('-i, --ignore-extension <exts...>', 'File extensions to ignore (e.g., .test.ts .spec.ts)')
+  .option(
+    '-i, --ignore-extension <exts...>',
+    "File patterns to ignore (e.g., '.test.*'). Quote globs."
+  )
   .option('-d, --declarations', 'Include .d.ts declaration files (excluded by default)', false)
   .requiredOption('-o, --output <path>', 'Output file path (.json or .dot)')
   .parse(process.argv);
